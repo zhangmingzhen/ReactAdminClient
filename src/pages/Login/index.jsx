@@ -9,7 +9,7 @@ import { reqLogin } from '../../api/index';
 import memoryUtils from '../../utils/memoryUtils'
 import storageUtils from '../../utils/storageUtils';
 //引入logo
-import logo from './images/logo.png'
+import logo from '../../asset/image/logo.png'
 //引入样式
 import './login.less'
 
