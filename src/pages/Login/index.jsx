@@ -1,10 +1,13 @@
 import React, { Component } from 'react'
-import { Form, Input, Button } from 'antd';
+import { Form, Input, Button, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 //引入样式
 import './login.less'
 //引入logo
 import logo from './images/logo.png'
+// 引入ajax请求函数模块
+import { reqLogin } from '../../api/index';
+
 
 const Item = Form.Item //不能写在import之前
 
@@ -12,8 +15,39 @@ const Item = Form.Item //不能写在import之前
 export default class Login extends Component {
 
  //对所有表单字段进行验证(验证通过时)，(点击提交按钮后的回调)
- handleFinish = (values) => {
-  console.log('提交登录的ajax请求', values)
+ handleFinish = async (values) => {
+  // console.log('提交登录的ajax请求', values)
+  //解构赋值
+  const { username, password } = values
+  //请求登录
+  //优化写法1
+  // try {
+  //  const response = await reqLogin(username, password)
+  //  console.log('用户', username, '请求成功了', response.data);
+  // } catch (error) {
+  //  // console.log('用户', username, '请求失败了', error);
+  //  alert ('请求出错了', error.message)
+  // }
+  //优化写法2
+  const result = await reqLogin(username, password)
+  // const result = response.data//{status: 0, data:user} || {status:1, msg:'xxx'}
+  if (result.status === 0){//登陆成功
+   console.log('登陆成功');
+
+   message.success('登陆成功')
+
+   //跳转到管理界面(用replace,因为不需要再回退到登陆界面)
+   this.props.history.replace('/')
+  } else {//登录失败
+   console.log('登陆失败');
+   message.error(result.msg)
+  }
+  //一般写法
+  //  reqLogin(username, password).then(response => {
+  //   console.log('用户', username, '请求成功了', response.data);
+  //  }).catch(error => {
+  //   console.log('用户', username, '请求失败了', error);
+  //  })
  }
  //对所有表单字段进行验证(验证不通过时)，(点击提交按钮后的回调)
  handleFinishFailed = ({ values, errorFields, outOfDate }) => {
