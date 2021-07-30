@@ -1,13 +1,17 @@
 import React, { Component } from 'react'
 import { Form, Input, Button, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
-//引入样式
-import './login.less'
-//引入logo
-import logo from './images/logo.png'
+import { Redirect } from 'react-router-dom';
+
 // 引入ajax请求函数模块
 import { reqLogin } from '../../api/index';
-
+//引入工具模块
+import memoryUtils from '../../utils/memoryUtils'
+import storageUtils from '../../utils/storageUtils';
+//引入logo
+import logo from './images/logo.png'
+//引入样式
+import './login.less'
 
 const Item = Form.Item //不能写在import之前
 
@@ -31,10 +35,16 @@ export default class Login extends Component {
   //优化写法2
   const result = await reqLogin(username, password)
   // const result = response.data//{status: 0, data:user} || {status:1, msg:'xxx'}
-  if (result.status === 0){//登陆成功
+  if (result.status === 0) {//登陆成功
    console.log('登陆成功');
-
    message.success('登陆成功')
+   //保存user
+   const user = result.data
+   //保存在内存中（保证可以成功跳转）
+   memoryUtils.user = user
+   // 长期保存（保证刷新后不丢失登录信息）
+   storageUtils.saveUser(user)
+
 
    //跳转到管理界面(用replace,因为不需要再回退到登陆界面)
    this.props.history.replace('/')
@@ -61,6 +71,12 @@ export default class Login extends Component {
  //  // return new Promise();
  // }
  render() {
+  //判断用户是否登录，若以登录则直接跳转到admin界面
+  const user = memoryUtils.user
+  if (user && user._id) {
+   return <Redirect to='/' />
+  }
+
   return (
    <div className='login'>
     <header className='login-header'>
