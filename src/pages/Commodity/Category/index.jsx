@@ -47,12 +47,13 @@ export default class Category extends Component {
 
 
  //异步获取（一级/二级）列表显示
- getCategorys = async () => {
+ // 参数paretnId若无指定按照状态中的parentId
+ getCategorys = async (parentId = this.state.parentId) => {
   //请求前，显示loading
   this.setState({ loading: true })
 
   //获取parentId
-  const { parentId } = this.state
+  // const { parentId } = this.state
   const result = await reqGetCategory(parentId);
   // console.log('result', result);
   if (result.status === 0) {
@@ -114,20 +115,56 @@ export default class Category extends Component {
 
  //点击取消，隐藏选框 
  handleCancel = () => {
-  this.form.resetFields()
+  // this.form.resetFields()
   this.setState({ showStatus: 0 })
 
  }
 
  //添加分类
  addCategory = () => {
-  console.log('addCategory');
+  //Ⅰ进行表单验证
+  this.formAdd.validateFields().then(async values => {
+   // console.log('addCategory');
+   // console.log('addCategory----formAdd', this.formAdd);
+   // const formAdd = this.formAdd//用了新写法以后，这个也不需要了
+   //1.隐藏选框
+   this.setState({ showStatus: 0 })
+   //2.发送添加分类请求
+   //①准备数据
+   // const { parentId, categoryName } = formAdd.getFieldsValue()//旧写法
+   const { parentId, categoryName } = values//新写法
+   // console.log('parentId,categoryName',parentId,categoryName)
 
+   // const parentId = formAdd.getFieldValue('parentId')//parentId是select中被选中的那一个
+   // const categoryName = formAdd.getFieldValue('categoryName')
+   // ②
+   //清除输入的数据
+   this.formAdd.resetFields()
+   // ③发请求
+   const result = await reqAddCategory(parentId, categoryName);
+   if (result.status === 0) {
+    // console.log('add发送成功', result)
+    //3.重新渲染界面
+    //这里注意，如果在一级列表中如果不是往一级列表中添加分类，就没必要重新渲染页面
+    //同时，如果在a二级列表中添加b二级列表项，也没必要渲染页面/
+    //就是说只有当当前的页面与要添加的列表行相同时，才重新渲染页面
+    if (parentId === this.state.parentId) {
+     this.getCategorys()
+    } else if (parentId === '0') {
+     //但是当在二级列表中往一级列表中添加分类时需要重新获取一级列表但不显示一级列表
+     this.getCategorys('0')
+
+    }
+   } else {
+    console.log('add发送失败', result)
+    message.error('添加分类出错！')
+   }
+  }).catch(err => {
+   message.error('分类名称不能为空')
+  })
 
 
  }
-
-
  ///这里要注意！！！
  /*
  因为antd4使用useForm来创建form（里面包含了一系列的方法）从而对Form组件进行管理，
@@ -142,27 +179,38 @@ export default class Category extends Component {
  */
 
  //更新分类
- updateCategory = async () => {
-  // 1.隐藏更新选框
-  this.setState({ showStatus: 0 })
-  // 2.发请求更新分类  
-  // ①准备数据
-  //获取当前请求更改的分类对象
-  const categoryId = this.category._id
-  //获取新分类名
+ updateCategory = () => {
+  // Ⅰ.进行表单验证
+  this.form.validateFields().then(async values => {
+   // 1.隐藏更新选框
+   this.setState({ showStatus: 0 })
+   // 2.发请求更新分类  
+   // ①准备数据
+   //获取当前请求更改的分类对象
+   const categoryId = this.category._id
+   //获取新分类名
+   // const categoryName = this.form.getFieldValue('categoryName')//旧写法
+   // console.log('values', values);//values={categoryName:''}
+   const { categoryName } = values//新写法
 
-  const categoryName = this.form.getFieldValue('categoryName')
-  // console.log('updateCategory---this.form', this.form);
-  // console.log('updateCategory---categoryName', categoryName);
-  // ②发送请求
-  const result = await reqUpdateCategory({ categoryId, categoryName })
-  if (result.status === 0) {
-   // 3.重新显示列表
-   console.log('请求成功 result', result)
-   this.getCategorys()
-  } else {
-   console.log('请求失败 result', result);
-  }
+   // console.log('updateCategory---this.form', this.form);
+   // console.log('updateCategory---categoryName', categoryName);
+   //②清除输入的数据
+   this.form.resetFields()
+   // ③发送请求
+   const result = await reqUpdateCategory({ categoryId, categoryName })
+   if (result.status === 0) {
+    // 3.重新显示列表
+    console.log('请求成功 result', result)
+    this.getCategorys()
+   } else {
+    console.log('请求失败 result', result);
+   }
+  }).catch(err => {
+   // console.log('err',err);
+   message.error('分类名称不能为空')
+  })
+
  }
  // 为第一次render准备数据
  UNSAFE_componentWillMount() {
@@ -212,7 +260,9 @@ export default class Category extends Component {
      visible={showStatus === 1}
      onOk={this.addCategory}
      onCancel={this.handleCancel}>
-     <AddForm categorys={categorys} parentId={parentId}></AddForm>
+     <AddForm categorys={categorys}
+      parentId={parentId}
+      setFormAdd={formAdd => this.formAdd = formAdd}></AddForm>
     </Modal>
     <Modal title="修改分类"
      visible={showStatus === 2}
