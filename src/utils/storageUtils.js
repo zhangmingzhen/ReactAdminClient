@@ -25,7 +25,7 @@ export default {
  //删除user
  removeUser() {
   //原生方式（兼容性较差)
-  localStorage.removeItem(USER_KEY)
+  // localStorage.removeItem(USER_KEY)
 
   //使用store库
   store.remove(USER_KEY)

@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Link, withRouter } from 'react-router-dom'
 import { Menu } from 'antd';
 //引入menuConfig
-import menuList from '../../config/menuConfig';
+import menuList from '../../config/menuConfig'
 import logo from '../../asset/image/logo.png'
 import './index.less'
 
@@ -11,6 +11,8 @@ const { SubMenu } = Menu;
 
 // 左侧导航栏组件
 class LeftNav extends Component {
+
+
 
  //根据menu的数据数组生成对应的标签数组
  //使用map+递归 
@@ -82,15 +84,16 @@ class LeftNav extends Component {
 
  //在第一次render之前执行一次
  //为第一次render渲染做准备（同步的准备）
- componentWillMount() {
+ UNSAFE_componentWillMount() {
   this.menuNodes = this.getMenuNodes_reduce(menuList)
  }
 
+
  render() {
   //得到当前求的路由路径
-  // const path = ''
+  // // const path = ''
   const path = this.props.location.pathname
-  console.log('LeftNavRender', path);
+  // console.log('LeftNavRender', path);
   const openKey = this.openKey//获取需要被打开的子菜单的key
   return (
    <div className='left-nav'>
