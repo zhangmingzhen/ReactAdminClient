@@ -64,7 +64,8 @@ class LeftNav extends Component {
 
     //查找一个当前请求路径匹配的的子item
     const cItem = item.children.find((cItem => {
-     return cItem.key === path
+     // return cItem.key === path//旧写法，只有完全匹配才会选中
+     return path.indexOf(cItem.key) === 0//新写法，只要开头匹配即可
     }))
     //如果存在，说明当前item对应的子SubMenu需要展开
     if (cItem) {
@@ -91,9 +92,12 @@ class LeftNav extends Component {
 
  render() {
   //得到当前求的路由路径
-  // // const path = ''
-  const path = this.props.location.pathname
+  let path = this.props.location.pathname
   // console.log('LeftNavRender', path);
+  if (path.indexOf('/commodity/product') === 0) {//若与'/product'匹配的下标为0，则说明这是商品相关页面
+   path = '/commodity/product'
+  }
+
   const openKey = this.openKey//获取需要被打开的子菜单的key
   return (
    <div className='left-nav'>
