@@ -5,9 +5,8 @@ import { ArrowLeftOutlined } from '@ant-design/icons'
 import LinkButton from '../../../../components/LinkButton'
 import PicturesWall from './PicturesWall'
 import RichTextEditor from './RichTextEditor'
-import { reqGetCategory } from '../../../../api/index'
+import { reqGetCategory, reqAddOrUpdateProduct } from '../../../../api/index'
 
-import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
 
 
 const { Item } = Form
@@ -37,15 +36,42 @@ export default class ProductAddUpdate extends Component {
   this.formRef = c
  }
  pwRef = React.createRef()//照片墙
+ editorRef = React.createRef()//商品详情
 
  //提交表单
  submit = () => {
   //进行表单验证
-  this.formRef.validateFields().then(values => {
-   console.log('发送回调请求', values)
+  this.formRef.validateFields().then( async values => {
+   //1. 收集数据,封装成product对象
+   const { name, desc, price, categoryIds } = values
+   let categoryId, pCategoryId
+   if (categoryIds.length === 1) {
+    pCategoryId = '0'
+    categoryId = categoryIds[0]
+   } else {
+    pCategoryId = categoryIds[0]
+    categoryId = categoryIds[1]
+   }
    const imgs = this.pwRef.current.getImgs()
-   console.log('images', imgs);
+   const detail = this.editorRef.current.getDetail()
+   // 封装成product对象
+   const product = {name,desc,price,imgs,detail,categoryId,pCategoryId}
+   //判断是更新还是添加
+   if (this.isUpdate) {
+    product._id = this.product._id
+   }
+   console.log('发送回调请求', product)
+   // console.log('images', imgs);
+   // console.log('detail', detail);
+   //2. 调用接口请求函数，发送请求
+   const result = await reqAddOrUpdateProduct(product)
+   if (result.status === 0) {
+    console.log('成功；啊');
+    message.success('商品信息'+(this.isUpdate?'更新':'添加')+'成功')
+   }
+   //3. 根据结果提示
   }).catch(err => {
+   console.log('失败啦');
    message.error('表单验证不通过')
   })
  }
@@ -126,6 +152,8 @@ export default class ProductAddUpdate extends Component {
   })
  }
 
+
+
  UNSAFE_componentWillMount() {
   // 取出props路由跳转过来携带的数据
   const product = this.props.location.state
@@ -144,7 +172,7 @@ export default class ProductAddUpdate extends Component {
 
  render() {
   const { isUpdate, product } = this
-  const { pCategoryId, categoryId, imgs } = product
+  const { pCategoryId, categoryId, imgs, detail } = product
   //用于接受级联分类id的数组
   const categoryIds = []
   if (isUpdate) {
@@ -170,8 +198,8 @@ export default class ProductAddUpdate extends Component {
   return (
    <Card title={title} >
     <Form ref={this.setRef}
-     labelCol={{ span: 2 }}//指定左侧label的宽度
-     wrapperCol={{ span: 8 }}//指定右侧包裹的宽度
+     labelCol={{ span: 4 }}//指定左侧label的宽度
+     wrapperCol={{ span: 10 }}//指定右侧包裹的宽度
     >
      <Item label='商品名称' name='name'
       initialValue={product.name}
@@ -193,8 +221,7 @@ export default class ProductAddUpdate extends Component {
       },]}>
       <Input type='number' placeholder='请输入商品价格' suffix='元'></Input>
      </Item>
-     <Item label='商品分类'
-      name='categoryIds'
+     <Item label='商品分类' name='categoryIds'
       initialValue={categoryIds}
       rules={[{ required: true, message: '商品分类不能为空' },]}
       imgs={imgs}>
@@ -203,11 +230,15 @@ export default class ProductAddUpdate extends Component {
        onChange={this.onChange}
        changeOnSelect />
      </Item>
-     <Item label='商品图片'>
+     <Item label='商品图片' >
       <PicturesWall ref={this.pwRef}></PicturesWall>
      </Item>
-     <Item label='商品详情'>
-      <RichTextEditor/>
+     <Item label='商品详情'
+      labelCol={{ span: 4 }}//指定左侧label的宽度
+      wrapperCol={{ span: 16 }}//指定右侧包裹的宽度
+     >
+      <RichTextEditor detail={detail}
+       ref={this.editorRef} />
      </Item>
      <Item >
       <Button type='primary' onClick={this.submit}>提交</Button>
