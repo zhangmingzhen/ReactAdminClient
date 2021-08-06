@@ -3,7 +3,12 @@ import { Switch, Route } from 'react-router-dom'
 import { Card, Form, Input, Cascader, Upload, Button, message } from 'antd'
 import { ArrowLeftOutlined } from '@ant-design/icons'
 import LinkButton from '../../../../components/LinkButton'
+import PicturesWall from './PicturesWall'
+import RichTextEditor from './RichTextEditor'
 import { reqGetCategory } from '../../../../api/index'
+
+import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
+
 
 const { Item } = Form
 const { TextArea } = Input
@@ -26,17 +31,20 @@ export default class ProductAddUpdate extends Component {
  state = {
   options,
  }
+
  //设置ref
- setRef = c => {
+ setRef = c => {//表单
   this.formRef = c
  }
+ pwRef = React.createRef()//照片墙
 
  //提交表单
  submit = () => {
   //进行表单验证
   this.formRef.validateFields().then(values => {
    console.log('发送回调请求', values)
-
+   const imgs = this.pwRef.current.getImgs()
+   console.log('images', imgs);
   }).catch(err => {
    message.error('表单验证不通过')
   })
@@ -128,7 +136,7 @@ export default class ProductAddUpdate extends Component {
   //保存商品，如果不存在则为空对象，避免报错
   this.product = product || {}
  }
- 
+
  componentDidMount() {
   // console.log(this.formRef);
   this.getCategorys('0')
@@ -136,7 +144,7 @@ export default class ProductAddUpdate extends Component {
 
  render() {
   const { isUpdate, product } = this
-  const { pCategoryId, categoryId } = product
+  const { pCategoryId, categoryId, imgs } = product
   //用于接受级联分类id的数组
   const categoryIds = []
   if (isUpdate) {
@@ -158,7 +166,6 @@ export default class ProductAddUpdate extends Component {
     <span>{isUpdate ? '修改商品' : '添加商品'}</span>
    </span>
   )
-
 
   return (
    <Card title={title} >
@@ -186,19 +193,21 @@ export default class ProductAddUpdate extends Component {
       },]}>
       <Input type='number' placeholder='请输入商品价格' suffix='元'></Input>
      </Item>
-     <Item label='商品分类' name='categoryIds'
+     <Item label='商品分类'
+      name='categoryIds'
       initialValue={categoryIds}
-      rules={[{ required: true, message: '商品分类不能为空' },]}>
+      rules={[{ required: true, message: '商品分类不能为空' },]}
+      imgs={imgs}>
       <Cascader options={this.state.options}//需要显示的列表项
        loadData={this.loadData}//当选择某个列表项，加载下一级列表的监听回调
        onChange={this.onChange}
        changeOnSelect />
      </Item>
      <Item label='商品图片'>
-      <div>商品图片</div>
+      <PicturesWall ref={this.pwRef}></PicturesWall>
      </Item>
      <Item label='商品详情'>
-      <div>商品详情</div>
+      <RichTextEditor/>
      </Item>
      <Item >
       <Button type='primary' onClick={this.submit}>提交</Button>
@@ -208,3 +217,7 @@ export default class ProductAddUpdate extends Component {
   )
  }
 }
+
+
+
+

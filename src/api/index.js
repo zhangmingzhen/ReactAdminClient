@@ -73,4 +73,5 @@ export const reqSearchProducts = ({ pageNum, pageSize, searchName, searchType })
 export const reqUpdateStatus = (productId, status) =>
  ajax(BASE + '/manage/product/updateStatus', { productId, status },'POST')
 
- 
+ //删除后台图片
+export const reqDeleteImg = name => ajax(BASE+'/manage/img/delete',{name},'POST')
