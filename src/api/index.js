@@ -79,4 +79,15 @@ export const reqDeleteImg = name => ajax(BASE + '/manage/img/delete', { name }, 
 //添加商品或修改商品
 export const reqAddOrUpdateProduct = product =>
  ajax(BASE + '/manage/product/' + (product._id ? 'update' : 'add'), product, 'POST')
- 
+
+
+//获取所有角色的列表
+export const reqGetRole = () => ajax(BASE + '/manage/role/list')
+
+//添加角色
+export const reqAddRole = roleName => ajax(BASE + '/manage/role/add', { roleName }, 'POST')
+
+//更新角色权限
+export const reqUpdateRole = role =>
+ ajax(BASE + '/manage/role/update', role, 'POST')
+

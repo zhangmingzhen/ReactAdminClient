@@ -33,7 +33,7 @@ export default class RichTextEditor extends Component {
  }
 
  onEditorStateChange = (editorState) => {
-  console.log('onEditorStateChange',);
+  // console.log('onEditorStateChange',);
   this.setState({
    editorState,
   });

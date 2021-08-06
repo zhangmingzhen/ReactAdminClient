@@ -48,7 +48,8 @@ class Header extends Component {
     title = item.title
    } else if (item.children !== undefined) {//若不同，则查找此item的children中是否有key与path相同的对象
     // console.log(item.children);
-    const cItem = item.children.find(cItem => cItem.key === path)
+    // const cItem = item.children.find(cItem => cItem.key === path)
+    const cItem = item.children.find(cItem => path.indexOf(cItem.key) === 0)
     if (cItem) {//若有，则返回title
      title = cItem.title
     }
@@ -93,7 +94,7 @@ class Header extends Component {
    <div className='header'>
     <div className='header-top'>
      <span>欢迎，{username}</span>
-     <LinkButton  onClick={this.logout}>退出</LinkButton>
+     <LinkButton onClick={this.logout}>退出</LinkButton>
     </div>
     <div className='header-bottom'>
      <div className='header-bottom-left'>{title}</div>
