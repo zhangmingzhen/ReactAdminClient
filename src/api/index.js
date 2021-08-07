@@ -18,10 +18,18 @@ const BASE = ''
 export const reqLogin = (username, password) => ajax(BASE + '/login', { username, password }, 'POST')
 
 // 添加用户
-export const reqAddUser = (user) => ajax(BASE + 'manage/user/add', user, 'POST')
+export const reqAddUser = user => ajax(BASE + 'manage/user/add', user, 'POST')
+
+//获取所有用户列表
+export const reqGetUser = () => ajax(BASE + '/manage/user/list')
+
+//修改用户
+export const reqUpdateUser = user => ajax(BASE + '/manage/user/update', user, 'POST')
+
+//删除用户
+export const reqRemoveUser = userId => ajax(BASE + '/manage/user/delete', { userId }, 'POST')
 
 // json请求的接口请求函数
-
 export const reqWeather = (city) => {
 
  return new Promise((resolve, reject) => {
@@ -92,4 +100,3 @@ export const reqUpdateRole = role =>
  ajax(BASE + '/manage/role/update', role, 'POST')
 
 
- //获取所有用户列表
