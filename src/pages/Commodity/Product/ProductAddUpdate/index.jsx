@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import { Switch, Route } from 'react-router-dom'
 import { Card, Form, Input, Cascader, Upload, Button, message } from 'antd'
 import { ArrowLeftOutlined } from '@ant-design/icons'
@@ -12,23 +12,11 @@ import { reqGetCategory, reqAddOrUpdateProduct } from '../../../../api/index'
 const { Item } = Form
 const { TextArea } = Input
 
-const options = [
- {
-  value: 'zhejiang',
-  label: 'Zhejiang',
-  isLeaf: false,
- },
- {
-  value: 'jiangsu',
-  label: 'Jiangsu',
-  isLeaf: false,
- },
-];
 //Product的默认子路由组件
-export default class ProductAddUpdate extends Component {
+export default class ProductAddUpdate extends PureComponent {
 
  state = {
-  options,
+  options:[],
  }
 
  //设置ref
@@ -83,7 +71,6 @@ export default class ProductAddUpdate extends Component {
    value: category._id,
    isLeaf: false
   }))
-
   //如果是二级分类商品更新
   const { isUpdate, product } = this
   const { pCategoryId, categoryId } = product
@@ -144,12 +131,13 @@ export default class ProductAddUpdate extends Component {
    targetOption.children = childOptions
   } else {
    targetOption.isLeaf = true//有点疑惑，为什么这里改了就修改了state中的options？因为是引用值
-   //所以其实就是简介修改了state中options中的值
+   //所以其实就是间接修改了state中options中的值
   }
   //更新状态
   this.setState({
    options: [...this.state.options],//在这里将options展开再赋值
   })
+  // this.setState({options:this.state.options})//最好不要这么写
  }
 
 
