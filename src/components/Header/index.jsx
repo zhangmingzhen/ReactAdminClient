@@ -64,7 +64,6 @@ class Header extends Component {
   confirm({
    title: '你确定要退出吗？',
    icon: <ExclamationCircleOutlined />,
-   content: 'Some descriptions',
    onOk: () => {
     console.log('OK', this);
     //删除保存的用户数据

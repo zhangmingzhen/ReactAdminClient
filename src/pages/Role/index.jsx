@@ -5,6 +5,8 @@ import { PAGE_SIZE } from '../../utils/constant'
 import AddForm from './AddForm'
 import AuthForm from './AuthForm'
 import memoryUtils from '../../utils/memoryUtils'
+import storageUtils from '../../utils/storageUtils'
+
 import formateDate from '../../utils/dateUtils'
 
 export default class Role extends Component {
@@ -28,12 +30,12 @@ export default class Role extends Component {
    {
     title: '创建时间',
     dataIndex: 'create_time',
-    render:(create_time)=>formateDate(create_time)
+    render: (create_time) => formateDate(create_time)
    },
    {
     title: '授权时间',
     dataIndex: 'auth_time',
-    render:formateDate
+    render: formateDate
    },
    {
     title: '授权人',
@@ -81,7 +83,6 @@ export default class Role extends Component {
    if (result.status === 0) {
     //3.1将新创建的角色更新到状态
     const role = result.data
-    // console.log('请求成功', role);
     this.setState(state => ({
      roles: [...this.state.roles, role]
     }))
@@ -98,9 +99,9 @@ export default class Role extends Component {
  }
 
  //设置角色权限
- authRole = async() => {
+ authRole = async () => {
   //1.获取数据
-  console.log(' authRole', this.authRef.current);
+  // console.log(' authRole', this.authRef.current);
   const authForm = this.authRef.current
   const menus = authForm.getMenus()//获取menus
   const role = this.state.role
@@ -110,15 +111,24 @@ export default class Role extends Component {
   // 2.发送请求
   const result = await reqUpdateRole(role)
   if (result.status === 0) {
-   console.log('请求发送成功 ', result.data);
+   // console.log('请求发送成功 ');
+   this.getRole()
+   // 如果当前更新的是自己的角色，要强制退出
+   if (role._id === memoryUtils.user.role_id) {
+    //把数据清除
+    memoryUtils.user = {}
+    storageUtils.removeUser()
+    message.
+     this.props.history.replace('/login')
+    message.success('当前用户角色权限修改了，重新登陆')
+   }
    message.success('设置角色权限成功')
-   // this.getRole()
-   this.setState({roles:[...this.state.roles]})
+   this.setState({ roles: [...this.state.roles] })
   } else {
    console.log('请求发送失败 ', result);
   }
   // 4.隐藏选框
-  this.setState({isShowAuth:false})
+  this.setState({ isShowAuth: false })
  }
 
  UNSAFE_componentWillMount() {
@@ -159,7 +169,11 @@ export default class Role extends Component {
       defaultPageSize: PAGE_SIZE,
       showQuickJumper: true
      }}
-     rowSelection={{ type: 'radio', selectedRowKeys: [role._id] }}
+     rowSelection={{
+      type: 'radio',
+      selectedRowKeys: [role._id],
+      onSelect: role => this.setState({ role })
+     }}
      onRow={this.onRow}
     >
     </Table>
