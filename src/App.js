@@ -8,7 +8,6 @@ import 'antd/dist/antd.less';
 export default class App extends Component {
  render() {
   return (
-
    <BrowserRouter>
     <Switch>
      <Route path='/login' component={Login}></Route>

@@ -59,6 +59,7 @@ class Header extends Component {
   // this.setState({ title })
   return title
  }
+ 
  //退出登录
  logout = () => {
   confirm({

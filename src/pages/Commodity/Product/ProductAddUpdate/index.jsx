@@ -16,7 +16,7 @@ const { TextArea } = Input
 export default class ProductAddUpdate extends PureComponent {
 
  state = {
-  options:[],
+  options: [],
  }
 
  //设置ref
@@ -29,7 +29,7 @@ export default class ProductAddUpdate extends PureComponent {
  //提交表单
  submit = () => {
   //进行表单验证
-  this.formRef.validateFields().then( async values => {
+  this.formRef.validateFields().then(async values => {
    //1. 收集数据,封装成product对象
    const { name, desc, price, categoryIds } = values
    let categoryId, pCategoryId
@@ -43,23 +43,23 @@ export default class ProductAddUpdate extends PureComponent {
    const imgs = this.pwRef.current.getImgs()
    const detail = this.editorRef.current.getDetail()
    // 封装成product对象
-   const product = {name,desc,price,imgs,detail,categoryId,pCategoryId}
+   const product = { name, desc, price, imgs, detail, categoryId, pCategoryId }
    //判断是更新还是添加
    if (this.isUpdate) {
     product._id = this.product._id
    }
-   console.log('发送回调请求', product)
+   // console.log('发送回调请求', product)
    // console.log('images', imgs);
    // console.log('detail', detail);
    //2. 调用接口请求函数，发送请求
    const result = await reqAddOrUpdateProduct(product)
    if (result.status === 0) {
-    console.log('成功；啊');
-    message.success('商品信息'+(this.isUpdate?'更新':'添加')+'成功')
+    // console.log('成功；啊');
+    message.success('商品信息' + (this.isUpdate ? '更新' : '添加') + '成功')
    }
    //3. 根据结果提示
   }).catch(err => {
-   console.log('失败啦');
+   // console.log('失败啦');
    message.error('表单验证不通过')
   })
  }
@@ -107,9 +107,9 @@ export default class ProductAddUpdate extends PureComponent {
   }
  }
 
- onChange = (value, selectedOptions) => {
-  console.log(value, selectedOptions);
- };
+ // onChange = (value, selectedOptions) => {
+ //  console.log(value, selectedOptions);
+ // };
 
  //用于加载下一级的列表
  loadData = async selectedOptions => {
@@ -160,13 +160,15 @@ export default class ProductAddUpdate extends PureComponent {
 
  render() {
   const { isUpdate, product } = this
+  // debugger;
   const { pCategoryId, categoryId, imgs, detail } = product
+
   //用于接受级联分类id的数组
   const categoryIds = []
   if (isUpdate) {
    //商品是一级分类商品
    if (pCategoryId === '0') {
-    categoryIds.push(pCategoryId)
+    categoryIds.push(categoryId)
    } else {
     //商品是二级分类商品
     categoryIds.push(pCategoryId)
@@ -212,14 +214,14 @@ export default class ProductAddUpdate extends PureComponent {
      <Item label='商品分类' name='categoryIds'
       initialValue={categoryIds}
       rules={[{ required: true, message: '商品分类不能为空' },]}
-      imgs={imgs}>
+     >
       <Cascader options={this.state.options}//需要显示的列表项
        loadData={this.loadData}//当选择某个列表项，加载下一级列表的监听回调
-       onChange={this.onChange}
+       // onChange={this.onChange}
        changeOnSelect />
      </Item>
      <Item label='商品图片' >
-      <PicturesWall ref={this.pwRef}></PicturesWall>
+      <PicturesWall ref={this.pwRef} imgs={imgs}></PicturesWall>
      </Item>
      <Item label='商品详情'
       labelCol={{ span: 4 }}//指定左侧label的宽度

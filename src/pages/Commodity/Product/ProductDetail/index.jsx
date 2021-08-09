@@ -19,9 +19,12 @@ export default class ProductDetail extends Component {
 
  async componentDidMount() {
   const { pCategoryId, categoryId } = this.props.location.state.product
-  if (pCategoryId === 0) {
-   const result = await reqGetOneCategory(pCategoryId)
-   if (result.status === 0) {
+  // console.log('peoductDetail',pCategoryId, categoryId);
+
+  if (pCategoryId === '0') {
+   const result = await reqGetOneCategory(categoryId)
+   // console.log('peoductDetail---pCategoryId === 0',result);
+   if (result.status ===0) {
     this.setState({ cName1: result.data.name })
    } else {
     message.error('请求分类名称失败')

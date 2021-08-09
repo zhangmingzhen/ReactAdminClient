@@ -22,7 +22,7 @@ class LeftNav extends Component {
   // 1.如果当前用户是admin则直接返回true
   //2.当前用户有此item的权限
   //3.如果当前item是公开的
-  if (username === 'admin' || isPublic || menus.indexOf(key )!== -1){
+  if (username === 'admin' || isPublic || menus.indexOf(key)!== -1){
    return true
   }else  if(item.children){
    //4.当前用户有此item的某个子item的权限，则应该显示
@@ -65,7 +65,6 @@ class LeftNav extends Component {
 
  //使用reduce+递归 
  getMenuNodes_reduce = (menuList) => {
-
   //得到当前求的路由路径
   // const path = ''
   const path = this.props.location.pathname

@@ -92,6 +92,7 @@ export default class ProductHome extends Component {
    message.error('更新商品状态出错')
   }
  }
+ 
  //发送商品请求列表
  getProducts = async (pageNum) => {
   this.pageNum = pageNum//保存当前页码

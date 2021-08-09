@@ -35,12 +35,16 @@ export default class AuthForm extends PureComponent {
   return this.state.checkedKeys
  }
 
- constructor(props) {
-  super(props)
-  // console.log('constructor', this.props.role);
-  // this.setState({checkedKeys:this.props.role.menus})//①
-  this.state.checkedKeys = this.props.role.menus//初始化被选中的权限//②
-  //①②都可以，因为是在改变状态的途中，所以可以直接设置
+ // constructor(props) {
+ //  super(props)
+ //  // console.log('constructor', this.props.role);
+ //  // this.setState({checkedKeys:this.props.role.menus})//①
+ //  this.state.checkedKeys = this.props.role.menus//初始化被选中的权限//②
+ //  //①②都可以，因为是在改变状态的途中，所以可以直接设置
+ // }
+
+ componentDidMount() {
+  this.setState({ checkedKeys: this.props.role.menus })//①
  }
 
  UNSAFE_componentWillReceiveProps(nextProps) {
@@ -48,6 +52,7 @@ export default class AuthForm extends PureComponent {
   const menus = nextProps.role.menus
   this.setState({ checkedKeys: menus })//每一次新props传入前都先更新checkedKeys
  }
+
 
  componentWillMount() {
   this.treeData = [//初始化treeData 
@@ -61,7 +66,7 @@ export default class AuthForm extends PureComponent {
 
  render() {
   const { role } = this.props
-  const { selectedKeys, checkedKeys } = this.state
+  const { checkedKeys } = this.state
   // console.log('render----checkedKeys', checkedKeys);
   // console.log('AuthForm----role.roleName',role.name);
   return (

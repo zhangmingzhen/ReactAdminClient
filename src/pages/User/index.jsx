@@ -10,6 +10,12 @@ import formateDate from '../../utils/dateUtils'
 
 const { confirm } = Modal
 
+//在这有个显示密码的功能我认为不太好，因为从后台返回的数据的密码是经过md5加密后的，
+//如果直接在修改框里面显示加密后的密码，如果用户不更改密码那么它的密码就会改成密文，
+//这回导致很多问题，所以我想将密码这一栏从修改框里删去，但是我又想到这本来就是后台管理系统，
+//按理来说应该是要能看到密码才行的，所以我现在就维持不懂吧
+//让用户更改的，并且没有找到
+
 export default class User extends Component {
 
  state = {
@@ -83,7 +89,7 @@ export default class User extends Component {
    this.initRoleNames(roles )
    this.setState({ users, roles })
   } else {
-   console.log('getUser失败', result);
+   // console.log('getUser失败', result);
   }
  }
 
@@ -122,7 +128,7 @@ export default class User extends Component {
  addUser = () => {
   const addForm = this.form.current.addForm.current
   addForm.validateFields().then(async user => {
-   console.log('values', user);
+   // console.log('addUser', user);
    //发送请求(values就是一个用户)
    // user.password = '123456'//默认密码为123456
    const result = await reqAddUser(user)
@@ -145,10 +151,10 @@ export default class User extends Component {
 
  //更新用户
  updateUser = () => {
-  console.log('updateUser', this.form.current);
+  // console.log('updateUser', this.form.current);
   const updateForm = this.form.current.addForm.current
   updateForm.validateFields().then(async user => {
-   // console.log('表单验证五错');
+   // console.log('updateUser',user);
    user._id = this.state.user._id//设置修改待修改用户的id
    const result = await reqUpdateUser(user)
    if (result.status === 0) {
@@ -166,7 +172,7 @@ export default class User extends Component {
  //删除用户
  removeUser = async () => {
   // console.log('123456', this.state.user);
-  const {user,roles} = this.state//从状态中读取user
+  const {user} = this.state//从状态中读取user
   const result = await reqRemoveUser(user._id)
   if (result.status === 0) {
    console.log('removeUser成功', result.data);
@@ -210,7 +216,7 @@ export default class User extends Component {
      dataSource={users}
      bordered
      pagination={{
-      defaultPageSize: PAGE_SIZE,
+      defaultPageSize: 5,
       showQuickJumper: true
      }}
     >

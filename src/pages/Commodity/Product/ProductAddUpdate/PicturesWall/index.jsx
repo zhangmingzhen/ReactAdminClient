@@ -23,11 +23,9 @@ export default class PicturesWall extends Component {
   imgs: PropTpyes.array
  }
 
-
-
  constructor(props) {//构造器
   super(props)
-  const fileList = []//默认为空数组
+  let fileList = []//默认为空数组
   //若传入imgs属性则赋值给fileList
   const { imgs } = this.props
   if (imgs && imgs.length > 0) {
@@ -66,9 +64,10 @@ export default class PicturesWall extends Component {
  //file是当前操作的图片（上传/删除）
  //filelist是所有已上传图片的数组
  handleChange = async ({ file, fileList }) => {
-  console.log('handleChange--1', file, fileList[fileList.length - 1], file === fileList[fileList.length - 1]);
+  // console.log('handleChange--1', file, fileList[fileList.length - 1], file === fileList[fileList.length - 1]);
 
-  if (file.status === 'done') {//上传一张图片，此函数会调用三次，只有最后一次才存在response
+  if (file.status === 'done') {//上传一张图片，此函数会调用三次，
+   // 只有最后一次才存在response,此时状态为done
    //一旦上传成功，将当前上传的file的信息修正(name，url）
    const result = file.response
    if (result.status === 0) {
@@ -87,7 +86,6 @@ export default class PicturesWall extends Component {
     message.error('删除图片失败')
    }
   }
-
   //更新文件列表状态
   this.setState({ fileList })
  };
@@ -116,7 +114,7 @@ export default class PicturesWall extends Component {
      onPreview={this.handlePreview}//
      onChange={this.handleChange}
     >
-     {fileList.length >= 8 ? null : uploadButton}
+     {fileList.length >= 3 ? null : uploadButton}
     </Upload>
     <Modal
      visible={previewVisible}

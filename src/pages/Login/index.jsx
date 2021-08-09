@@ -3,7 +3,12 @@ import { Form, Input, Button, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { Redirect } from 'react-router-dom';
 
-/////////////有个bug，就是表单验证时，输入不合规范的信息时，.catch里面不执行，所以无法显示格式错误的message
+/////////////有个bug，就是表单验证时，输入不合规范的信息时，
+// .catch里面不执行，所以无法显示格式错误的message
+//发现问题所在了：因为之前是把button的类类型设为了submit,然后验证的函数是
+// onFinish={this.handleFinish}所以只要点击它就相当于提交了表单
+//我把Button的类型改掉，并且onClick={this.handleFinish},此时就没有这个问题了
+//我就这样子啦
 
 
 // 引入ajax请求函数模块
@@ -69,6 +74,7 @@ export default class Login extends Component {
   }).catch(err => {
    //这好像执行不到，为什么？
    console.log(err);
+   console.log('表单验证失败');
    message.error('用户名或密码格式错误！')
   })
  }
@@ -145,7 +151,7 @@ export default class Login extends Component {
      <Form
       name="normal_login"
       className="login-form"
-      onFinish={this.handleFinish}
+      // onFinish={this.handleFinish}
       ref={this.setRef}
      // onFinishFailed={this.handleFinishFailed}
      // onSubmit={this.handleSubmit}
@@ -170,17 +176,18 @@ export default class Login extends Component {
         { pattern: /^[a-zA-Z0-9_]+$/, message: '密码必须是英文、数字或下划线组成' }
         //  {validator:this.validatePwd}//自定义校验
        ]}
-       // initialValue=''
       >
        <Input
         prefix={<LockOutlined className="site-form-item-icon rgba0-0-0-5" />}
         type="password"
         placeholder="密码"
-       // defaultValue=''
        />
       </Item>
       <Item>
-       <Button type="primary" htmlType="submit" className="login-form-button width100">
+       <Button type="primary"
+        // htmlType="submit"
+        onClick={this.handleFinish}
+        className="login-form-button width100">
         登录
        </Button>
       </Item>

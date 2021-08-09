@@ -32,8 +32,8 @@ export default class AddForm extends Component {
     {/* <Item style={{ width: '100%' }} > */}
     <Item name='parentId' initialValue={parentId}>
      {/* defaultValue="0" */}
-     <Select >
-      <Option value='0'>一级分类</Option>
+     <Select defaultValue={parentId}>
+      <Option value='0' key='0'>一级分类</Option>
       {categorys.map(category =>
        <Option value={category._id} key={category._id}>{category.name} </Option>)}
      </Select>

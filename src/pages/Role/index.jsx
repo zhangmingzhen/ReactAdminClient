@@ -69,11 +69,11 @@ export default class Role extends Component {
 
  //添加角色
  addRole = () => {
-  console.log(this);
+  // console.log(this);
   const addForm = this.addRef.current.addForm.current
   // 1.表单验证
   addForm.validateFields().then(async values => {
-   console.log('表单验证通过', values);
+   // console.log('表单验证通过', values);
    //2.获取数据
    const { roleName } = values
    //2.1清除数据
@@ -93,7 +93,7 @@ export default class Role extends Component {
    //4.隐藏选框
    this.setState({ isShowAdd: false })
   }).catch(err => {
-   console.log('表单验证不通过', err.value);
+   // console.log('表单验证不通过', err.value);
    message.error('表单验证不通过', err.value)
   })
  }
@@ -118,8 +118,7 @@ export default class Role extends Component {
     //把数据清除
     memoryUtils.user = {}
     storageUtils.removeUser()
-    message.
-     this.props.history.replace('/login')
+    this.props.history.replace('/login')
     message.success('当前用户角色权限修改了，重新登陆')
    }
    message.success('设置角色权限成功')
@@ -166,7 +165,7 @@ export default class Role extends Component {
      dataSource={roles}
      bordered
      pagination={{
-      defaultPageSize: PAGE_SIZE,
+      defaultPageSize: 5,
       showQuickJumper: true
      }}
      rowSelection={{
